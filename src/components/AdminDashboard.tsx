@@ -1,5 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import MapVisualization from "./MapVisualization";
+import DashboardCharts from "./DashboardCharts";
 import { 
   BarChart3, 
   Users, 
@@ -8,7 +11,8 @@ import {
   FileText, 
   Settings,
   MapPin,
-  Briefcase
+  Briefcase,
+  Map
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -103,81 +107,109 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={stat.title} className="bg-gradient-to-br from-card to-muted/20 shadow-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
-                      <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                      <p className={`text-sm font-medium ${stat.color}`}>{stat.change}</p>
-                    </div>
-                    <Icon className={`w-8 h-8 ${stat.color}`} />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {/* Main Content with Tabs */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg">
+            <TabsTrigger value="overview" className="flex items-center space-x-2">
+              <BarChart3 className="w-4 h-4" />
+              <span>Tổng quan</span>
+            </TabsTrigger>
+            <TabsTrigger value="charts" className="flex items-center space-x-2">
+              <TrendingUp className="w-4 h-4" />
+              <span>Biểu đồ</span>
+            </TabsTrigger>
+            <TabsTrigger value="map" className="flex items-center space-x-2">
+              <Map className="w-4 h-4" />
+              <span>Bản đồ</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Card key={action.title} className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
-                <CardHeader>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{action.title}</CardTitle>
-                      <CardDescription>{action.description}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" className="w-full">
-                    {action.action}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Recent Activity */}
-        <Card className="bg-gradient-to-br from-card to-muted/20">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="w-5 h-5" />
-              <span>Hoạt động gần đây</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                "Công ty TNHH ABC đã đăng 3 tin tuyển dụng mới",
-                "Phê duyệt báo cáo lao động Q4/2024 từ Sở Lao động",
-                "Cập nhật thông tin 125 hồ sơ người lao động",
-                "Xác thực thông tin 8 doanh nghiệp mới đăng ký"
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <p className="text-sm text-foreground flex-1">{activity}</p>
-                  <span className="text-xs text-muted-foreground">
-                    {index + 1}h trước
-                  </span>
-                </div>
-              ))}
+          <TabsContent value="overview" className="space-y-6">
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <Card key={stat.title} className="bg-gradient-to-br from-card to-muted/20 shadow-card">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+                          <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                          <p className={`text-sm font-medium ${stat.color}`}>{stat.change}</p>
+                        </div>
+                        <Icon className={`w-8 h-8 ${stat.color}`} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Card key={action.title} className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
+                    <CardHeader>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <Icon className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg">{action.title}</CardTitle>
+                          <CardDescription>{action.description}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Button variant="outline" className="w-full">
+                        {action.action}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Recent Activity */}
+            <Card className="bg-gradient-to-br from-card to-muted/20">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="w-5 h-5" />
+                  <span>Hoạt động gần đây</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    "Công ty TNHH ABC đã đăng 3 tin tuyển dụng mới",
+                    "Phê duyệt báo cáo lao động Q4/2024 từ Sở Lao động",
+                    "Cập nhật thông tin 125 hồ sơ người lao động",
+                    "Xác thực thông tin 8 doanh nghiệp mới đăng ký"
+                  ].map((activity, index) => (
+                    <div key={index} className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      <p className="text-sm text-foreground flex-1">{activity}</p>
+                      <span className="text-xs text-muted-foreground">
+                        {index + 1}h trước
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="charts" className="space-y-6">
+            <DashboardCharts />
+          </TabsContent>
+
+          <TabsContent value="map" className="space-y-6">
+            <MapVisualization />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
