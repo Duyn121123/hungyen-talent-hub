@@ -466,10 +466,26 @@ const MapVisualization = () => {
     });
   };
 
+  const isValidMapboxToken = (token: string) => {
+    return token.trim().startsWith('pk.') && token.length > 20;
+  };
+
   const handleTokenSubmit = () => {
-    if (mapboxToken.trim()) {
+    const token = mapboxToken.trim();
+    if (token && isValidMapboxToken(token)) {
       setShowTokenInput(false);
-      initializeMap(mapboxToken.trim());
+      initializeMap(token);
+    } else if (token && !isValidMapboxToken(token)) {
+      alert('Token không hợp lệ. Mapbox Public Token phải bắt đầu bằng "pk." và có độ dài phù hợp.');
+    }
+  };
+
+  const handleResetToTokenInput = () => {
+    setShowTokenInput(true);
+    setIsMapLoaded(false);
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
     }
   };
 
@@ -549,54 +565,126 @@ const MapVisualization = () => {
         </CardHeader>
         <CardContent>
           {showTokenInput ? (
-            <div className="space-y-4 p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center">
-                <Settings className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
+            <div className="space-y-6 p-8">
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary via-primary-glow to-secondary rounded-2xl flex items-center justify-center shadow-xl mb-4">
+                  <Settings className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   Cấu hình Mapbox Token
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Để hiển thị bản đồ, vui lòng nhập Mapbox Public Token của bạn.
-                  <br />
-                  Bạn có thể lấy token tại{' '}
-                  <a 
-                    href="https://mapbox.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    mapbox.com
-                  </a>
+                <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
+                  Để hiển thị bản đồ tương tác với heatmap, markers chi tiết và thông tin địa lý thực, 
+                  vui lòng cấu hình Mapbox Public Token của bạn.
                 </p>
               </div>
-              <div className="max-w-md mx-auto space-y-3">
-                <div>
-                  <Label htmlFor="mapbox-token">Mapbox Public Token</Label>
-                  <Input
-                    id="mapbox-token"
-                    type="text"
-                    placeholder="pk.ey..."
-                    value={mapboxToken}
-                    onChange={(e) => setMapboxToken(e.target.value)}
-                    className="mt-1"
-                  />
+
+              {/* Token Benefits */}
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center">
+                    <MapPin className="w-4 h-4 mr-2 text-primary" />
+                    Bản đồ thực tế
+                  </h4>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>• Heatmap phân bố lao động</li>
+                    <li>• Markers chi tiết từng huyện</li>
+                    <li>• Popup thông tin đầy đủ</li>
+                    <li>• Điều khiển zoom, tilt, xoay</li>
+                  </ul>
                 </div>
-                <Button 
-                  onClick={handleTokenSubmit}
-                  disabled={!mapboxToken.trim()}
-                  className="w-full mb-2"
-                >
-                  Tải bản đồ
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => setShowTokenInput(false)}
-                  className="w-full"
-                >
-                  Xem chế độ thống kê
-                </Button>
+                <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 p-4 rounded-lg border border-secondary/20">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center">
+                    <Building2 className="w-4 h-4 mr-2 text-secondary" />
+                    Chế độ thống kê
+                  </h4>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>• Sơ đồ tròn theo tỷ lệ</li>
+                    <li>• Không cần token</li>
+                    <li>• Hiển thị dữ liệu cơ bản</li>
+                    <li>• Phù hợp xem nhanh</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Token Input Form */}
+              <div className="max-w-md mx-auto space-y-4">
+                <div>
+                  <Label htmlFor="mapbox-token" className="text-sm font-medium">
+                    Mapbox Public Token
+                  </Label>
+                  <div className="mt-1 relative">
+                    <Input
+                      id="mapbox-token"
+                      type="text"
+                      placeholder="pk.eyJ1..."
+                      value={mapboxToken}
+                      onChange={(e) => setMapboxToken(e.target.value)}
+                      className={`pr-10 ${mapboxToken && !isValidMapboxToken(mapboxToken) ? 'border-destructive' : ''}`}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      {mapboxToken && (
+                        isValidMapboxToken(mapboxToken) ? (
+                          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                            <span className="text-white text-xs">✓</span>
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-destructive flex items-center justify-center">
+                            <span className="text-white text-xs">✗</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  {mapboxToken && !isValidMapboxToken(mapboxToken) && (
+                    <p className="text-xs text-destructive mt-1">
+                      Token phải bắt đầu bằng "pk." và có độ dài phù hợp
+                    </p>
+                  )}
+                </div>
+                
+                {/* Instructions */}
+                <div className="bg-muted/50 p-3 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    <strong>Hướng dẫn lấy token:</strong>
+                  </p>
+                  <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+                    <li>Truy cập{' '}
+                      <a 
+                        href="https://mapbox.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        mapbox.com
+                      </a>
+                    </li>
+                    <li>Tạo tài khoản miễn phí (nếu chưa có)</li>
+                    <li>Vào Dashboard → Access Tokens</li>
+                    <li>Copy "Default Public Token"</li>
+                  </ol>
+                </div>
+
+                <div className="space-y-2">
+                  <Button 
+                    onClick={handleTokenSubmit}
+                    disabled={!mapboxToken.trim() || !isValidMapboxToken(mapboxToken)}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Tải bản đồ thực tế
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowTokenInput(false)}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    Xem chế độ thống kê
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -664,11 +752,27 @@ const MapVisualization = () => {
                 <div className="relative">
                   <div ref={mapContainer} className="w-full h-[500px] rounded-lg shadow-lg" />
                   {!isMapLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
-                      <div className="text-center">
-                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                        <p className="text-sm text-muted-foreground">Đang tải bản đồ...</p>
+                    <div className="absolute inset-0 flex items-center justify-center bg-card/90 backdrop-blur-sm rounded-lg">
+                      <div className="text-center p-6">
+                        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p className="text-sm font-medium text-foreground mb-1">Đang tải bản đồ Mapbox...</p>
+                        <p className="text-xs text-muted-foreground">Kết nối với dịch vụ bản đồ</p>
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* Map Controls */}
+                  {isMapLoaded && (
+                    <div className="absolute top-4 right-4 z-10">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleResetToTokenInput}
+                        className="bg-card/90 backdrop-blur-sm shadow-md"
+                      >
+                        <Settings className="w-3 h-3 mr-1" />
+                        Cài đặt
+                      </Button>
                     </div>
                   )}
                   <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-sm">
