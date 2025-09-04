@@ -575,17 +575,22 @@ const MapVisualization = () => {
                       <div className="w-4 h-4 bg-gradient-to-br from-primary to-secondary rounded-full border border-white"></div>
                       <span>Marker chính = Tổng lao động</span>
                     </div>
-                    {selectedIndustry !== 'all' && districtData[0] && (
-                      <div className="flex items-center space-x-2 text-xs">
-                        <div 
-                          className="w-3 h-3 rounded-full border border-white" 
-                          style={{ 
-                            backgroundColor: districtData[0].industries[selectedIndustry as keyof typeof districtData[0].industries]?.color || '#666'
-                          }}
-                        />
-                        <span>Marker phụ = {getIndustryName(selectedIndustry)}</span>
-                      </div>
-                    )}
+                    {selectedIndustry !== 'all' && districtData[0] && (() => {
+                      const firstDistrict = districtData[0];
+                      const industryKey = selectedIndustry as keyof typeof firstDistrict.industries;
+                      const industryData = firstDistrict.industries[industryKey];
+                      const markerColor = industryData?.color || '#666';
+                      
+                      return (
+                        <div className="flex items-center space-x-2 text-xs">
+                          <div 
+                            className="w-3 h-3 rounded-full border border-white" 
+                            style={{ backgroundColor: markerColor }}
+                          />
+                          <span>Marker phụ = {getIndustryName(selectedIndustry)}</span>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
