@@ -197,13 +197,15 @@ const MapVisualization = () => {
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [106.0511, 20.7464], // Tọa độ trung tâm Hưng Yên
-      zoom: 9.5,
-      pitch: 0,
+      zoom: 10,
+      pitch: 45,
+      bearing: 0,
+      antialias: true
     });
 
-    // Add navigation controls
+    // Add comprehensive map controls
     map.current.addControl(
       new mapboxgl.NavigationControl({
         visualizePitch: true,
@@ -211,15 +213,108 @@ const MapVisualization = () => {
       'top-right'
     );
 
+    map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+    
+    map.current.addControl(new mapboxgl.ScaleControl({
+      maxWidth: 100,
+      unit: 'metric'
+    }), 'bottom-right');
+
     map.current.on('load', () => {
       setIsMapLoaded(true);
+      addHeatmapLayer();
       addMarkersToMap();
+      
+      // Smooth entrance animation
+      map.current?.flyTo({
+        center: [106.0511, 20.7464],
+        zoom: 10,
+        pitch: 45,
+        duration: 2500,
+        essential: true
+      });
     });
 
     map.current.on('error', (e) => {
       console.error('Mapbox error:', e);
-      alert('Lỗi tải bản đồ. Vui lòng kiểm tra lại Mapbox token.');
+      alert('Lỗi tải bản đồ. Vui lòng kiểm tra token Mapbox của bạn.');
     });
+  };
+
+  // Add heatmap layer for workforce distribution visualization
+  const addHeatmapLayer = () => {
+    if (!map.current) return;
+
+    const heatmapData = {
+      type: 'FeatureCollection' as const,
+      features: districtData.map(district => ({
+        type: 'Feature' as const,
+        properties: {
+          workers: district.workers,
+          companies: district.companies,
+          name: district.name,
+          unemployment: district.unemployment
+        },
+        geometry: {
+          type: 'Point' as const,
+          coordinates: district.coords
+        }
+      }))
+    };
+
+    map.current.addSource('workforce-heatmap', {
+      type: 'geojson',
+      data: heatmapData
+    });
+
+    // Add heatmap layer
+    map.current.addLayer({
+      id: 'workforce-heatmap-layer',
+      type: 'heatmap',
+      source: 'workforce-heatmap',
+      maxzoom: 15,
+      paint: {
+        'heatmap-weight': [
+          'interpolate',
+          ['linear'],
+          ['get', 'workers'],
+          0, 0,
+          3000, 1
+        ],
+        'heatmap-intensity': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          0, 0.8,
+          15, 2
+        ],
+        'heatmap-color': [
+          'interpolate',
+          ['linear'],
+          ['heatmap-density'],
+          0, 'rgba(33,102,172,0)',
+          0.2, 'rgba(103,169,207,0.3)',
+          0.4, 'rgba(209,229,240,0.5)',
+          0.6, 'rgba(253,219,199,0.7)',
+          0.8, 'rgba(239,138,98,0.8)',
+          1, 'rgba(178,24,43,1)'
+        ],
+        'heatmap-radius': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          0, 15,
+          15, 40
+        ],
+        'heatmap-opacity': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          7, 0.8,
+          14, 0.4
+        ]
+      }
+    }, 'waterway-label');
   };
 
   const addMarkersToMap = () => {
@@ -491,9 +586,16 @@ const MapVisualization = () => {
                 <Button 
                   onClick={handleTokenSubmit}
                   disabled={!mapboxToken.trim()}
-                  className="w-full"
+                  className="w-full mb-2"
                 >
                   Tải bản đồ
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowTokenInput(false)}
+                  className="w-full"
+                >
+                  Xem chế độ thống kê
                 </Button>
               </div>
             </div>
@@ -558,42 +660,168 @@ const MapVisualization = () => {
                 </Button>
               </div>
 
-              <div className="relative">
-                <div ref={mapContainer} className="w-full h-[500px] rounded-lg shadow-lg" />
-                {!isMapLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
-                    <div className="text-center">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                      <p className="text-sm text-muted-foreground">Đang tải bản đồ...</p>
+              {mapboxToken.trim() ? (
+                <div className="relative">
+                  <div ref={mapContainer} className="w-full h-[500px] rounded-lg shadow-lg" />
+                  {!isMapLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
+                      <div className="text-center">
+                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                        <p className="text-sm text-muted-foreground">Đang tải bản đồ...</p>
+                      </div>
                     </div>
-                  </div>
-                )}
-                <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-sm">
-                  <div className="text-xs text-muted-foreground mb-2">Chú thích:</div>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2 text-xs">
-                      <div className="w-4 h-4 bg-gradient-to-br from-primary to-secondary rounded-full border border-white"></div>
-                      <span>Marker chính = Tổng lao động</span>
+                  )}
+                  <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-sm">
+                    <div className="text-xs text-muted-foreground mb-2">Chú thích:</div>
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2 text-xs">
+                        <div className="w-4 h-4 bg-gradient-to-br from-primary to-secondary rounded-full border border-white"></div>
+                        <span>Marker chính = Tổng lao động</span>
+                      </div>
+                      {selectedIndustry !== 'all' && districtData[0] && (() => {
+                        const firstDistrict = districtData[0];
+                        const industryKey = selectedIndustry as keyof typeof firstDistrict.industries;
+                        const industryData = firstDistrict.industries[industryKey];
+                        const markerColor = industryData?.color || '#666';
+                        
+                        return (
+                          <div className="flex items-center space-x-2 text-xs">
+                            <div 
+                              className="w-3 h-3 rounded-full border border-white" 
+                              style={{ backgroundColor: markerColor }}
+                            />
+                            <span>Marker phụ = {getIndustryName(selectedIndustry)}</span>
+                          </div>
+                        );
+                      })()}
                     </div>
-                    {selectedIndustry !== 'all' && districtData[0] && (() => {
-                      const firstDistrict = districtData[0];
-                      const industryKey = selectedIndustry as keyof typeof firstDistrict.industries;
-                      const industryData = firstDistrict.industries[industryKey];
-                      const markerColor = industryData?.color || '#666';
-                      
-                      return (
-                        <div className="flex items-center space-x-2 text-xs">
-                          <div 
-                            className="w-3 h-3 rounded-full border border-white" 
-                            style={{ backgroundColor: markerColor }}
-                          />
-                          <span>Marker phụ = {getIndustryName(selectedIndustry)}</span>
-                        </div>
-                      );
-                    })()}
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="relative bg-gradient-to-br from-muted/30 to-muted/10 rounded-lg p-8 h-[500px] overflow-hidden">
+                  <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                  
+                  <div className="relative h-full">
+                    <div className="text-center mb-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        Sơ đồ phân bố nguồn nhân lực Hưng Yên
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Trực quan hóa dữ liệu trên bản đồ thống kê
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 h-full items-center">
+                      {districtData
+                        .sort((a, b) => b.workers - a.workers)
+                        .map((district, index) => {
+                          const maxWorkers = Math.max(...districtData.map(d => d.workers));
+                          const sizeRatio = district.workers / maxWorkers;
+                          const size = 60 + (sizeRatio * 40); // 60px to 100px
+                          
+                          const topIndustry = Object.entries(district.industries)
+                            .sort(([,a], [,b]) => b.workers - a.workers)[0];
+                          
+                          const selectedIndustryData = selectedIndustry !== 'all' 
+                            ? district.industries[selectedIndustry as keyof typeof district.industries]
+                            : null;
+
+                          return (
+                            <div key={district.name} className="flex flex-col items-center space-y-2 group">
+                              <div className="relative">
+                                {/* Main district circle */}
+                                <div 
+                                  className="rounded-full bg-gradient-to-br from-primary to-secondary border-4 border-white shadow-lg flex items-center justify-center cursor-pointer transition-transform hover:scale-110"
+                                  style={{
+                                    width: `${size}px`,
+                                    height: `${size}px`
+                                  }}
+                                  title={`${district.name}: ${district.workers.toLocaleString()} NLD, ${district.companies} DN`}
+                                >
+                                  <div className="text-center text-white">
+                                    <div className="text-xs font-bold">
+                                      {Math.round(district.workers / 100)}
+                                    </div>
+                                    <div className="text-[8px] opacity-90">x100</div>
+                                  </div>
+                                </div>
+
+                                {/* Industry indicator */}
+                                {selectedIndustryData && (
+                                  <div 
+                                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full border-2 border-white shadow-md flex items-center justify-center"
+                                    style={{ backgroundColor: selectedIndustryData.color }}
+                                    title={`${getIndustryName(selectedIndustry)}: ${selectedIndustryData.workers} NLD`}
+                                  >
+                                    <span className="text-[8px] text-white font-bold">
+                                      {Math.round(selectedIndustryData.workers / 50)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="text-center">
+                                <div className="text-xs font-medium text-foreground">
+                                  {district.name}
+                                </div>
+                                <div className="text-[10px] text-muted-foreground">
+                                  {district.workers.toLocaleString()} NLD
+                                </div>
+                                <div className="flex items-center justify-center space-x-1 mt-1">
+                                  <div 
+                                    className="w-2 h-2 rounded-full" 
+                                    style={{ backgroundColor: topIndustry[1].color }}
+                                  ></div>
+                                  <span className="text-[8px] text-muted-foreground">
+                                    {getIndustryName(topIndustry[0])}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+
+                    <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur-sm p-3 rounded-lg shadow-sm">
+                      <div className="text-xs text-muted-foreground mb-2">Chú thích:</div>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2 text-xs">
+                          <div className="w-4 h-4 bg-gradient-to-br from-primary to-secondary rounded-full border border-white"></div>
+                          <span>Kích thước = Số lượng lao động</span>
+                        </div>
+                        {selectedIndustry !== 'all' && (() => {
+                          const firstDistrict = districtData[0];
+                          const industryKey = selectedIndustry as keyof typeof firstDistrict.industries;  
+                          const industryData = firstDistrict.industries[industryKey];
+                          const markerColor = industryData?.color || '#666';
+                          
+                          return (
+                            <div className="flex items-center space-x-2 text-xs">
+                              <div 
+                                className="w-3 h-3 rounded-full border border-white" 
+                                style={{ backgroundColor: markerColor }}
+                              />
+                              <span>Chấm nhỏ = {getIndustryName(selectedIndustry)}</span>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    <div className="absolute bottom-4 right-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowTokenInput(true)}
+                        className="bg-card/90 backdrop-blur-sm"
+                      >
+                        <Settings className="w-3 h-3 mr-1" />
+                        Bản đồ thực
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
