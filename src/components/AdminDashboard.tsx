@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import MapVisualization from "./MapVisualization";
+import HungYenLaborMap from "./HungYenLaborMap";
 import DashboardCharts from "./DashboardCharts";
 import { 
   BarChart3, 
@@ -207,7 +207,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="map" className="space-y-6">
-            <MapVisualization />
+            <HungYenLaborMap />
           </TabsContent>
         </Tabs>
       </div>
