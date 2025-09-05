@@ -15,6 +15,7 @@ import {
   Download,
   RefreshCw
 } from "lucide-react";
+import HungYenLaborCharts from "./HungYenLaborCharts";
 
 const HungYenLaborMap = () => {
   const [mapboxToken, setMapboxToken] = useState('');
@@ -168,76 +169,8 @@ const HungYenLaborMap = () => {
           </CardContent>
         </Card>
 
-        {/* Demo View */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Xem trước dữ liệu (Demo)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative w-full h-[400px] bg-gradient-to-br from-muted/30 to-muted/60 rounded-lg overflow-hidden">
-              {/* Background map illustration */}
-              <div className="absolute inset-0 opacity-20">
-                <svg viewBox="0 0 400 300" className="w-full h-full">
-                  <path
-                    d="M50 100 Q100 80 150 90 T250 100 Q300 110 350 90 L350 250 Q300 240 250 250 T150 240 Q100 250 50 240 Z"
-                    fill="hsl(var(--primary))"
-                    className="opacity-60"
-                  />
-                </svg>
-              </div>
-              
-              {/* Data points */}
-              {laborData.map((location, index) => (
-                <div
-                  key={location.id}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
-                  style={{
-                    left: `${25 + index * 15}%`,
-                    top: `${40 + Math.sin(index) * 20}%`
-                  }}
-                >
-                  <div className="relative">
-                    <div 
-                      className="rounded-full border-4 border-white shadow-lg transition-all duration-300 group-hover:scale-125"
-                      style={{
-                        width: `${Math.sqrt(location.workers / 100)}px`,
-                        height: `${Math.sqrt(location.workers / 100)}px`,
-                        backgroundColor: 'hsl(var(--primary))'
-                      }}
-                    ></div>
-                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-foreground whitespace-nowrap">
-                      {location.location}
-                    </div>
-                    
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                      <div className="bg-card border rounded-lg shadow-lg p-3 text-sm whitespace-nowrap">
-                        <div className="font-semibold text-foreground mb-1">{location.location}</div>
-                        <div className="space-y-1 text-muted-foreground">
-                          <div className="flex items-center space-x-2">
-                            <Users className="w-3 h-3" />
-                            <span>Lao động: {location.workers.toLocaleString()}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Building2 className="w-3 h-3" />
-                            <span>Doanh nghiệp: {location.companies}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Briefcase className="w-3 h-3" />
-                            <span>Việc làm: {location.jobs}</span>
-                          </div>
-                        </div>
-                        <Badge variant="secondary" className="mt-2">
-                          {location.industry}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Enhanced Charts Visualization */}
+        <HungYenLaborCharts />
       </div>
     );
   };
