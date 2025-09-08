@@ -14,8 +14,10 @@ import {
   Heart,
   Send,
   Eye,
-  Building2
+  Building2,
+  Brain
 } from "lucide-react";
+import CVAnalyzer from "./CVAnalyzer";
 
 const WorkerDashboard = () => {
   const userStats = [
@@ -176,6 +178,11 @@ const WorkerDashboard = () => {
           })}
         </div>
 
+        {/* CV Analyzer Section */}
+        <div className="mb-8">
+          <CVAnalyzer />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recommended Jobs */}
           <div className="lg:col-span-2">
@@ -311,9 +318,9 @@ const WorkerDashboard = () => {
             
             <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
               <CardContent className="p-6 text-center">
-                <BookOpen className="w-12 h-12 mx-auto mb-4 text-accent" />
-                <h4 className="font-semibold text-foreground mb-2">Khóa học</h4>
-                <p className="text-sm text-muted-foreground">Nâng cao kỹ năng</p>
+                <Brain className="w-12 h-12 mx-auto mb-4 text-accent" />
+                <h4 className="font-semibold text-foreground mb-2">Phân tích CV</h4>
+                <p className="text-sm text-muted-foreground">AI phân tích & đề xuất</p>
               </CardContent>
             </Card>
             
