@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import JobPostingForm from "./JobPostingForm";
 import { 
   Plus, 
   Search, 
@@ -109,10 +110,7 @@ const EnterpriseDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Đăng tin tuyển dụng
-              </Button>
+              <JobPostingForm />
               <Button variant="outline">Đăng xuất</Button>
             </div>
           </div>
@@ -249,13 +247,17 @@ const EnterpriseDashboard = () => {
         <div className="mt-8">
           <h3 className="text-xl font-bold text-foreground mb-4">Thao tác nhanh</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
-              <CardContent className="p-6 text-center">
-                <Plus className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h4 className="font-semibold text-foreground mb-2">Đăng tin mới</h4>
-                <p className="text-sm text-muted-foreground">Tạo tin tuyển dụng mới</p>
-              </CardContent>
-            </Card>
+            <JobPostingForm 
+              trigger={
+                <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
+                  <CardContent className="p-6 text-center">
+                    <Plus className="w-12 h-12 mx-auto mb-4 text-primary" />
+                    <h4 className="font-semibold text-foreground mb-2">Đăng tin mới</h4>
+                    <p className="text-sm text-muted-foreground">Tạo tin tuyển dụng mới</p>
+                  </CardContent>
+                </Card>
+              }
+            />
             
             <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
               <CardContent className="p-6 text-center">
