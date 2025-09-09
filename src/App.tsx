@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./components/AdminDashboard";
 import EnterpriseDashboard from "./components/EnterpriseDashboard";
 import WorkerDashboard from "./components/WorkerDashboard";
+import FloatingChatBot from "./components/FloatingChatBot";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <FloatingChatBot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
