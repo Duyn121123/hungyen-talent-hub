@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import HungYenLaborMap from "./HungYenLaborMap";
 import DashboardCharts from "./DashboardCharts";
+import NGSCAIBot from "./NGSCAIBot";
 import { 
   BarChart3, 
   Users, 
@@ -12,7 +13,8 @@ import {
   Settings,
   MapPin,
   Briefcase,
-  Map
+  Map,
+  Bot
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -109,7 +111,7 @@ const AdminDashboard = () => {
 
         {/* Main Content with Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
               <span>Tổng quan</span>
@@ -121,6 +123,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="map" className="flex items-center space-x-2">
               <Map className="w-4 h-4" />
               <span>Bản đồ</span>
+            </TabsTrigger>
+            <TabsTrigger value="ai-bot" className="flex items-center space-x-2">
+              <Bot className="w-4 h-4" />
+              <span>AI Bot</span>
             </TabsTrigger>
           </TabsList>
 
@@ -208,6 +214,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="map" className="space-y-6">
             <HungYenLaborMap />
+          </TabsContent>
+
+          <TabsContent value="ai-bot" className="space-y-6">
+            <NGSCAIBot />
           </TabsContent>
         </Tabs>
       </div>
