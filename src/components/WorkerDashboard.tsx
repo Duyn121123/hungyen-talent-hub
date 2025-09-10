@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { 
   Search, 
   User, 
@@ -21,6 +22,7 @@ import {
 import CVAnalyzer from "./CVAnalyzer";
 
 const WorkerDashboard = () => {
+  const navigate = useNavigate();
   const userStats = [
     {
       title: "Hồ sơ đã nộp",
@@ -146,7 +148,7 @@ const WorkerDashboard = () => {
                 <User className="w-4 h-4" />
                 <span>nguyenvana@email.com</span>
               </div>
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2" onClick={() => navigate("/")}>
                 <LogOut className="w-4 h-4" />
                 <span>Đăng xuất</span>
               </Button>

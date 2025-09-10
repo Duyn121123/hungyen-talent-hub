@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 import JobPostingForm from "./JobPostingForm";
 import CandidateSearch from "./CandidateSearch";
 import { 
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 
 const EnterpriseDashboard = () => {
+  const navigate = useNavigate();
   const companyStats = [
     {
       title: "Tin tuyển dụng đang đăng",
@@ -119,7 +121,7 @@ const EnterpriseDashboard = () => {
                 <User className="w-4 h-4" />
                 <span>hr@abc-company.com</span>
               </div>
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2" onClick={() => navigate("/")}>
                 <LogOut className="w-4 h-4" />
                 <span>Đăng xuất</span>
               </Button>

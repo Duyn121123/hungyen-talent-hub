@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 import HungYenLaborMap from "./HungYenLaborMap";
 import DashboardCharts from "./DashboardCharts";
 import NGSCAIBot from "./NGSCAIBot";
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const stats = [
     {
       title: "Tổng số doanh nghiệp",
@@ -99,7 +101,7 @@ const AdminDashboard = () => {
                 <User className="w-4 h-4" />
                 <span>admin@hungyen.gov.vn</span>
               </div>
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2" onClick={() => navigate("/")}>
                 <LogOut className="w-4 h-4" />
                 <span>Đăng xuất</span>
               </Button>
