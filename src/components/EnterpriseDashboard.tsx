@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import JobPostingForm from "./JobPostingForm";
+import CandidateSearch from "./CandidateSearch";
 import { 
   Plus, 
   Search, 
@@ -208,10 +210,23 @@ const EnterpriseDashboard = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Ứng viên mới nhất</CardTitle>
-                <Button variant="outline" size="sm">
-                  <Search className="w-4 h-4 mr-2" />
-                  Tìm ứng viên
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Search className="w-4 h-4 mr-2" />
+                      Tìm ứng viên
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Tìm kiếm nhân tài</DialogTitle>
+                      <DialogDescription>
+                        Hệ thống đánh giá nhân tài 4 trụ cột của tỉnh Hưng Yên
+                      </DialogDescription>
+                    </DialogHeader>
+                    <CandidateSearch />
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardHeader>
             <CardContent>
@@ -259,13 +274,26 @@ const EnterpriseDashboard = () => {
               }
             />
             
-            <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
-              <CardContent className="p-6 text-center">
-                <Search className="w-12 h-12 mx-auto mb-4 text-secondary" />
-                <h4 className="font-semibold text-foreground mb-2">Tìm ứng viên</h4>
-                <p className="text-sm text-muted-foreground">Tìm kiếm nhân tài phù hợp</p>
-              </CardContent>
-            </Card>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
+                  <CardContent className="p-6 text-center">
+                    <Search className="w-12 h-12 mx-auto mb-4 text-secondary" />
+                    <h4 className="font-semibold text-foreground mb-2">Tìm ứng viên</h4>
+                    <p className="text-sm text-muted-foreground">Tìm kiếm nhân tài phù hợp</p>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Tìm kiếm nhân tài</DialogTitle>
+                  <DialogDescription>
+                    Hệ thống đánh giá nhân tài 4 trụ cột của tỉnh Hưng Yên
+                  </DialogDescription>
+                </DialogHeader>
+                <CandidateSearch />
+              </DialogContent>
+            </Dialog>
             
             <Card className="group hover:shadow-elegant transition-all duration-300 cursor-pointer bg-gradient-to-br from-card to-muted/20">
               <CardContent className="p-6 text-center">
