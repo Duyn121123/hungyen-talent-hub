@@ -15,7 +15,9 @@ import {
   DollarSign,
   Building2,
   Mail,
-  FileText
+  FileText,
+  LogOut,
+  User
 } from "lucide-react";
 
 const EnterpriseDashboard = () => {
@@ -113,7 +115,14 @@ const EnterpriseDashboard = () => {
             </div>
             <div className="flex items-center space-x-3">
               <JobPostingForm />
-              <Button variant="outline">Đăng xuất</Button>
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <User className="w-4 h-4" />
+                <span>hr@abc-company.com</span>
+              </div>
+              <Button variant="outline" className="flex items-center space-x-2">
+                <LogOut className="w-4 h-4" />
+                <span>Đăng xuất</span>
+              </Button>
             </div>
           </div>
         </div>

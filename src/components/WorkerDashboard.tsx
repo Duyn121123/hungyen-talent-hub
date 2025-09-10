@@ -15,7 +15,8 @@ import {
   Send,
   Eye,
   Building2,
-  Brain
+  Brain,
+  LogOut
 } from "lucide-react";
 import CVAnalyzer from "./CVAnalyzer";
 
@@ -141,7 +142,14 @@ const WorkerDashboard = () => {
                 <Search className="w-4 h-4 mr-2" />
                 Tìm việc làm
               </Button>
-              <Button variant="outline">Đăng xuất</Button>
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <User className="w-4 h-4" />
+                <span>nguyenvana@email.com</span>
+              </div>
+              <Button variant="outline" className="flex items-center space-x-2">
+                <LogOut className="w-4 h-4" />
+                <span>Đăng xuất</span>
+              </Button>
             </div>
           </div>
         </div>

@@ -14,7 +14,8 @@ import {
   MapPin,
   Briefcase,
   Map,
-  Bot
+  LogOut,
+  User
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -93,7 +94,16 @@ const AdminDashboard = () => {
                 <p className="text-sm text-muted-foreground">UBND Tỉnh Hưng Yên</p>
               </div>
             </div>
-            <Button variant="outline">Đăng xuất</Button>
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <User className="w-4 h-4" />
+                <span>admin@hungyen.gov.vn</span>
+              </div>
+              <Button variant="outline" className="flex items-center space-x-2">
+                <LogOut className="w-4 h-4" />
+                <span>Đăng xuất</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -111,7 +121,7 @@ const AdminDashboard = () => {
 
         {/* Main Content with Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-3 max-w-xl">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
               <span>Tổng quan</span>
@@ -123,10 +133,6 @@ const AdminDashboard = () => {
             <TabsTrigger value="map" className="flex items-center space-x-2">
               <Map className="w-4 h-4" />
               <span>Bản đồ</span>
-            </TabsTrigger>
-            <TabsTrigger value="ai-bot" className="flex items-center space-x-2">
-              <Bot className="w-4 h-4" />
-              <span>AI Bot</span>
             </TabsTrigger>
           </TabsList>
 
@@ -214,10 +220,6 @@ const AdminDashboard = () => {
 
           <TabsContent value="map" className="space-y-6">
             <HungYenLaborMap />
-          </TabsContent>
-
-          <TabsContent value="ai-bot" className="space-y-6">
-            <NGSCAIBot />
           </TabsContent>
         </Tabs>
       </div>
