@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./components/AdminDashboard";
 import EnterpriseDashboard from "./components/EnterpriseDashboard";
 import WorkerDashboard from "./components/WorkerDashboard";
+import ProvinceManagement from "./components/ProvinceManagement";
+import CommuneManagement from "./components/CommuneManagement";
 import FloatingChatBot from "./components/FloatingChatBot";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/enterprise" element={<EnterpriseDashboard />} />
           <Route path="/worker" element={<WorkerDashboard />} />
+          <Route path="/province" element={<ProvinceManagement />} />
+          <Route path="/commune" element={<CommuneManagement />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

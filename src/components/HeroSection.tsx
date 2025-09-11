@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building2, Users, UserCheck } from "lucide-react";
+import { Building2, Users, UserCheck, MapPin, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
@@ -16,10 +16,26 @@ const HeroSection = () => {
       route: "/admin"
     },
     {
+      title: "Sở Nội Vụ",
+      subtitle: "Quản lý cấp tỉnh",
+      description: "Quản trị hệ thống, danh mục, báo cáo và điều phối hỗ trợ",
+      icon: Building2,
+      variant: "province" as const,
+      route: "/province"
+    },
+    {
+      title: "UBND Xã/Phường",
+      subtitle: "Quản lý cấp xã",
+      description: "Hỗ trợ đăng ký NLĐ, tổ chức phiên giao dịch việc làm",
+      icon: Home,
+      variant: "commune" as const,
+      route: "/commune"
+    },
+    {
       title: "Doanh nghiệp",
       subtitle: "Đơn vị tuyển dụng",
       description: "Đăng tin tuyển dụng, tìm kiếm ứng viên phù hợp",
-      icon: Building2,
+      icon: MapPin,
       variant: "enterprise" as const,
       route: "/enterprise"
     },
@@ -70,7 +86,7 @@ const HeroSection = () => {
         </div>
 
         {/* User Type Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
           {userTypes.map((userType) => {
             const Icon = userType.icon;
             return (
@@ -78,23 +94,24 @@ const HeroSection = () => {
                 key={userType.variant}
                 className="group hover:shadow-elegant transition-all duration-300 cursor-pointer transform hover:-translate-y-1 bg-gradient-to-br from-card to-muted/30"
               >
-                <CardContent className="p-8 text-center">
-                  <div className="mb-6">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-8 h-8 text-white" />
+                <CardContent className="p-6 text-center">
+                  <div className="mb-4">
+                    <div className="w-14 h-14 mx-auto mb-3 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">
+                    <h3 className="text-lg font-bold text-foreground mb-1">
                       {userType.title}
                     </h3>
-                    <p className="text-sm font-medium text-primary mb-3">
+                    <p className="text-xs font-medium text-primary mb-2">
                       {userType.subtitle}
                     </p>
-                    <p className="text-muted-foreground mb-6">
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                       {userType.description}
                     </p>
                   </div>
                   <Button 
                     variant="default"
+                    size="sm"
                     onClick={() => navigate(userType.route)}
                     className="w-full bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-md hover:shadow-lg transition-all duration-300"
                   >
