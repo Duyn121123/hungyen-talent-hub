@@ -5,15 +5,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MapPin, Users, Building2, TrendingUp, Settings, Factory, Sprout, Briefcase, Laptop, HardHat } from 'lucide-react';
+import { MapPin, Users, Building2, TrendingUp, Settings, Factory, Sprout, Briefcase, Laptop, HardHat, Brain, X } from 'lucide-react';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const MapVisualization = () => {
+interface MapVisualizationProps {
+  aiAnalysis?: string;
+}
+
+const MapVisualization = ({ aiAnalysis }: MapVisualizationProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [showTokenInput, setShowTokenInput] = useState(true);
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
+  const [showAIPanel, setShowAIPanel] = useState(!!aiAnalysis);
+
+  useEffect(() => {
+    if (aiAnalysis) {
+      setShowAIPanel(true);
+    }
+  }, [aiAnalysis]);
 
   const getIndustryName = (key: string) => {
     const names = {
@@ -923,6 +935,77 @@ const MapVisualization = () => {
                         Bản đồ thực
                       </Button>
                     </div>
+
+                    {/* AI Analysis Panel Overlay */}
+                    {aiAnalysis && showAIPanel && (
+                      <div className="absolute top-4 left-4 w-96 max-h-[calc(100vh-200px)]">
+                        <Card className="bg-card/95 backdrop-blur-md border-2 border-primary/20 shadow-2xl">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Brain className="w-5 h-5 text-primary" />
+                                <CardTitle className="text-base">Phân tích & Đề xuất AI</CardTitle>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setShowAIPanel(false)}
+                                className="h-6 w-6 p-0"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <ScrollArea className="h-[400px] pr-4">
+                              <div className="space-y-4 text-sm">
+                                {aiAnalysis.split('\n\n').map((paragraph, idx) => (
+                                  <div key={idx} className="space-y-2">
+                                    {paragraph.split('\n').map((line, lineIdx) => {
+                                      // Format headings
+                                      if (line.startsWith('##')) {
+                                        return (
+                                          <h3 key={lineIdx} className="font-bold text-base text-primary mt-3 mb-2">
+                                            {line.replace('##', '').trim()}
+                                          </h3>
+                                        );
+                                      }
+                                      // Format bullet points
+                                      if (line.trim().startsWith('-') || line.trim().startsWith('•')) {
+                                        return (
+                                          <div key={lineIdx} className="flex gap-2 ml-2">
+                                            <span className="text-primary mt-1">•</span>
+                                            <span className="flex-1">{line.replace(/^[-•]\s*/, '').trim()}</span>
+                                          </div>
+                                        );
+                                      }
+                                      // Format numbered lists
+                                      if (/^\d+\./.test(line.trim())) {
+                                        return (
+                                          <div key={lineIdx} className="flex gap-2 ml-2">
+                                            <span className="text-primary font-semibold">{line.match(/^\d+\./)?.[0]}</span>
+                                            <span className="flex-1">{line.replace(/^\d+\.\s*/, '').trim()}</span>
+                                          </div>
+                                        );
+                                      }
+                                      // Regular paragraphs
+                                      if (line.trim()) {
+                                        return (
+                                          <p key={lineIdx} className="text-muted-foreground leading-relaxed">
+                                            {line.trim()}
+                                          </p>
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                  </div>
+                                ))}
+                              </div>
+                            </ScrollArea>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

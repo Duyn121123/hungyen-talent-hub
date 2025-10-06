@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import DashboardCharts from "./DashboardCharts";
+import MapVisualization from "./MapVisualization";
 import {
   Users,
   Building2,
@@ -40,6 +41,7 @@ const ProvinceManagement = () => {
   const { toast } = useToast();
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [activeTab, setActiveTab] = useState("system");
 
   const handleAIAnalysis = async () => {
     setIsAnalyzing(true);
@@ -83,9 +85,12 @@ const ProvinceManagement = () => {
       const data = await response.json();
       setAiAnalysis(data.analysis);
       
+      // Chuyển sang tab bản đồ để hiển thị kết quả
+      setActiveTab("map");
+      
       toast({
         title: "Phân tích hoàn tất",
-        description: "AI đã phân tích và đưa ra đề xuất phân bổ lao động",
+        description: "AI đã phân tích và đưa ra đề xuất phân bổ lao động. Xem kết quả trên bản đồ.",
       });
     } catch (error) {
       console.error('Error analyzing labor:', error);
@@ -250,14 +255,18 @@ const ProvinceManagement = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="system">Quản trị hệ thống</TabsTrigger>
             <TabsTrigger value="categories">Quản lý danh mục</TabsTrigger>
             <TabsTrigger value="reports">Báo cáo thống kê</TabsTrigger>
             <TabsTrigger value="monitoring">Giám sát kết nối</TabsTrigger>
             <TabsTrigger value="support">Điều phối hỗ trợ</TabsTrigger>
             <TabsTrigger value="ai-analysis">Phân tích AI</TabsTrigger>
+            <TabsTrigger value="map">
+              <MapPin className="w-4 h-4 mr-2" />
+              Bản đồ
+            </TabsTrigger>
           </TabsList>
 
           {/* Quản trị hệ thống */}
@@ -761,6 +770,11 @@ const ProvinceManagement = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Bản đồ với kết quả phân tích AI */}
+          <TabsContent value="map" className="space-y-6">
+            <MapVisualization aiAnalysis={aiAnalysis} />
           </TabsContent>
         </Tabs>
       </div>
