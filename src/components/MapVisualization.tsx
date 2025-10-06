@@ -924,7 +924,18 @@ const MapVisualization = ({ aiAnalysis }: MapVisualizationProps) => {
                       </div>
                     </div>
 
-                    <div className="absolute bottom-4 right-4">
+                    <div className="absolute bottom-4 right-4 flex gap-2">
+                      {aiAnalysis && (
+                        <Button
+                          variant={showAIPanel ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setShowAIPanel(!showAIPanel)}
+                          className="bg-primary/90 backdrop-blur-sm hover:bg-primary shadow-lg"
+                        >
+                          <Brain className="w-4 h-4 mr-1" />
+                          {showAIPanel ? "Ẩn đề xuất AI" : "Xem đề xuất AI"}
+                        </Button>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
@@ -938,19 +949,24 @@ const MapVisualization = ({ aiAnalysis }: MapVisualizationProps) => {
 
                     {/* AI Analysis Panel Overlay */}
                     {aiAnalysis && showAIPanel && (
-                      <div className="absolute top-4 left-4 w-96 max-h-[calc(100vh-200px)]">
-                        <Card className="bg-card/95 backdrop-blur-md border-2 border-primary/20 shadow-2xl">
-                          <CardHeader className="pb-3">
+                      <div className="absolute top-4 left-4 w-96 max-h-[calc(100vh-200px)] animate-in fade-in slide-in-from-left-5 duration-300">
+                        <Card className="bg-gradient-to-br from-primary/5 to-card/95 backdrop-blur-md border-2 border-primary shadow-2xl">
+                          <CardHeader className="pb-3 bg-primary/10">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <Brain className="w-5 h-5 text-primary" />
-                                <CardTitle className="text-base">Phân tích & Đề xuất AI</CardTitle>
+                                <div className="p-2 bg-primary rounded-lg">
+                                  <Brain className="w-5 h-5 text-primary-foreground" />
+                                </div>
+                                <div>
+                                  <CardTitle className="text-base">Đề xuất phân bổ lao động</CardTitle>
+                                  <p className="text-xs text-muted-foreground mt-0.5">Phân tích bởi AI</p>
+                                </div>
                               </div>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowAIPanel(false)}
-                                className="h-6 w-6 p-0"
+                                className="h-6 w-6 p-0 hover:bg-primary/20"
                               >
                                 <X className="w-4 h-4" />
                               </Button>
