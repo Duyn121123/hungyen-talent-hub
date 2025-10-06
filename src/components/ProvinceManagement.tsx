@@ -28,11 +28,76 @@ import {
   FileText,
   MapPin,
   GraduationCap,
-  Briefcase
+  Briefcase,
+  Brain,
+  Loader2
 } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const ProvinceManagement = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [aiAnalysis, setAiAnalysis] = useState<string>("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const handleAIAnalysis = async () => {
+    setIsAnalyzing(true);
+    try {
+      const laborData = {
+        totalWorkers: 284567,
+        totalCommunes: 162,
+        totalEnterprises: 3245,
+        activeJobs: 1893,
+        unemploymentRate: 2.8,
+        industries: categories.map(cat => ({
+          name: cat.name,
+          jobs: cat.jobs,
+          workers: cat.workers
+        }))
+      };
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-labor-allocation`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            laborData,
+            districts: communes.map(c => ({
+              name: c.name,
+              workers: c.workers,
+              unemployed: c.unemployed,
+              newRegistrations: c.newRegistrations
+            }))
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Lỗi khi phân tích dữ liệu');
+      }
+
+      const data = await response.json();
+      setAiAnalysis(data.analysis);
+      
+      toast({
+        title: "Phân tích hoàn tất",
+        description: "AI đã phân tích và đưa ra đề xuất phân bổ lao động",
+      });
+    } catch (error) {
+      console.error('Error analyzing labor:', error);
+      toast({
+        title: "Lỗi phân tích",
+        description: "Không thể thực hiện phân tích. Vui lòng thử lại sau.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const provinceStats = [
     {
@@ -186,12 +251,13 @@ const ProvinceManagement = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="system">Quản trị hệ thống</TabsTrigger>
             <TabsTrigger value="categories">Quản lý danh mục</TabsTrigger>
             <TabsTrigger value="reports">Báo cáo thống kê</TabsTrigger>
             <TabsTrigger value="monitoring">Giám sát kết nối</TabsTrigger>
             <TabsTrigger value="support">Điều phối hỗ trợ</TabsTrigger>
+            <TabsTrigger value="ai-analysis">Phân tích AI</TabsTrigger>
           </TabsList>
 
           {/* Quản trị hệ thống */}
@@ -620,6 +686,81 @@ const ProvinceManagement = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Phân tích AI */}
+          <TabsContent value="ai-analysis" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Brain className="w-5 h-5" />
+                  <span>Phân tích và đề xuất phân bổ lao động</span>
+                </CardTitle>
+                <CardDescription>
+                  Sử dụng AI để phân tích dữ liệu lao động và đưa ra đề xuất phân bổ tối ưu
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <div>
+                    <p className="font-medium">Dữ liệu sẵn sàng để phân tích</p>
+                    <p className="text-sm text-muted-foreground">
+                      {provinceStats[0].value} lao động • {provinceStats[1].value} xã/phường • {categories.length} ngành nghề
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={handleAIAnalysis} 
+                    disabled={isAnalyzing}
+                    size="lg"
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Đang phân tích...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-4 h-4 mr-2" />
+                        Bắt đầu phân tích
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {aiAnalysis && (
+                  <div className="space-y-4">
+                    <div className="border-t pt-4">
+                      <h3 className="text-lg font-semibold mb-3 flex items-center space-x-2">
+                        <BarChart3 className="w-5 h-5" />
+                        <span>Kết quả phân tích</span>
+                      </h3>
+                      <div className="prose prose-sm max-w-none bg-muted p-6 rounded-lg">
+                        <div className="whitespace-pre-wrap">{aiAnalysis}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                      <Button variant="outline" onClick={handleAIAnalysis}>
+                        <Brain className="w-4 h-4 mr-2" />
+                        Phân tích lại
+                      </Button>
+                      <Button variant="outline">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Xuất báo cáo
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {!aiAnalysis && !isAnalyzing && (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Nhấn nút "Bắt đầu phân tích" để AI phân tích dữ liệu lao động</p>
+                    <p className="text-sm mt-2">AI sẽ phân tích xu hướng, đề xuất phân bổ và dự báo nhu cầu</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

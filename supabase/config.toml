@@ -1,0 +1,4 @@
+project_id = "yhryhxswjarecleupjjo"
+
+[functions.analyze-labor-allocation]
+verify_jwt = false
