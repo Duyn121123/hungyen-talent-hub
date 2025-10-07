@@ -31,7 +31,10 @@ import {
   GraduationCap,
   Briefcase,
   Brain,
-  Loader2
+  Loader2,
+  Lightbulb,
+  CheckCircle,
+  RefreshCw
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -85,12 +88,12 @@ const ProvinceManagement = () => {
       const data = await response.json();
       setAiAnalysis(data.analysis);
       
-      // Chuyển sang tab bản đồ để hiển thị kết quả
-      setActiveTab("map");
+      // Chuyển sang tab đề xuất để hiển thị kết quả
+      setActiveTab("suggestions");
       
       toast({
         title: "Phân tích hoàn tất",
-        description: "AI đã phân tích và đưa ra đề xuất phân bổ lao động. Xem kết quả trên bản đồ.",
+        description: "AI đã tạo đề xuất phân bổ lao động. Xem trong tab Đề xuất.",
       });
     } catch (error) {
       console.error('Error analyzing labor:', error);
@@ -256,13 +259,17 @@ const ProvinceManagement = () => {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="system">Quản trị hệ thống</TabsTrigger>
             <TabsTrigger value="categories">Quản lý danh mục</TabsTrigger>
             <TabsTrigger value="reports">Báo cáo thống kê</TabsTrigger>
             <TabsTrigger value="monitoring">Giám sát kết nối</TabsTrigger>
             <TabsTrigger value="support">Điều phối hỗ trợ</TabsTrigger>
             <TabsTrigger value="ai-analysis">Phân tích AI</TabsTrigger>
+            <TabsTrigger value="suggestions">
+              <Lightbulb className="w-4 h-4 mr-2" />
+              Đề xuất
+            </TabsTrigger>
             <TabsTrigger value="map">
               <MapPin className="w-4 h-4 mr-2" />
               Bản đồ
@@ -766,6 +773,89 @@ const ProvinceManagement = () => {
                     <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <p>Nhấn nút "Bắt đầu phân tích" để AI phân tích dữ liệu lao động</p>
                     <p className="text-sm mt-2">AI sẽ phân tích xu hướng, đề xuất phân bổ và dự báo nhu cầu</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Đề xuất phân bổ nguồn lực */}
+          <TabsContent value="suggestions" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Lightbulb className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>Đề xuất phân bổ nguồn lực</CardTitle>
+                    <CardDescription>Các đề xuất chi tiết từ AI để tối ưu hóa phân bổ lao động</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!aiAnalysis ? (
+                  <div className="text-center py-12 space-y-4">
+                    <div className="p-4 bg-muted/50 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                      <Brain className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground">
+                        Chưa có đề xuất phân bổ nguồn lực
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Hãy chuyển sang tab "Phân tích AI" và nhấn "Bắt đầu phân tích" để nhận đề xuất từ AI
+                      </p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActiveTab("ai-analysis")}
+                    >
+                      <Brain className="w-4 h-4 mr-2" />
+                      Đi đến Phân tích AI
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                      <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div className="space-y-1">
+                        <p className="font-medium text-sm">Phân tích hoàn tất</p>
+                        <p className="text-sm text-muted-foreground">
+                          Dưới đây là các đề xuất phân bổ nguồn lực dựa trên dữ liệu lao động hiện tại
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="prose prose-sm max-w-none">
+                      <div className="whitespace-pre-wrap text-sm leading-relaxed bg-card p-6 rounded-lg border">
+                        {aiAnalysis}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-4 border-t">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setActiveTab("map")}
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Xem trên bản đồ
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={handleAIAnalysis}
+                        disabled={isAnalyzing}
+                      >
+                        {isAnalyzing ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                        )}
+                        Phân tích lại
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
