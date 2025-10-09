@@ -16,8 +16,10 @@ import {
   Briefcase,
   Map,
   LogOut,
-  User
+  User,
+  Calendar
 } from "lucide-react";
+import LaborForecast from "./LaborForecast";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -123,7 +125,7 @@ const AdminDashboard = () => {
 
         {/* Main Content with Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-xl">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
             <TabsTrigger value="overview" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
               <span>Tổng quan</span>
@@ -131,6 +133,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="charts" className="flex items-center space-x-2">
               <TrendingUp className="w-4 h-4" />
               <span>Biểu đồ</span>
+            </TabsTrigger>
+            <TabsTrigger value="forecast" className="flex items-center space-x-2">
+              <Calendar className="w-4 h-4" />
+              <span>Dự báo</span>
             </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center space-x-2">
               <Map className="w-4 h-4" />
@@ -218,6 +224,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="charts" className="space-y-6">
             <DashboardCharts />
+          </TabsContent>
+
+          <TabsContent value="forecast" className="space-y-6">
+            <LaborForecast />
           </TabsContent>
 
           <TabsContent value="map" className="space-y-6">
